@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "CPUXRay (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "CPUXRay (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
