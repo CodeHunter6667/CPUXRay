@@ -1,5 +1,12 @@
-﻿namespace CPUXRay.Services;
+﻿using CPUXRay.Models;
+using CPUXRay.Readers;
 
-public class GpuService
+namespace CPUXRay.Services;
+
+public static class GpuService
 {
+    public static GpuInfo GetGpuInfo()
+    {
+        return GpuReader.GetGpuInfo();
+    }
 }

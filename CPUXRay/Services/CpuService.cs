@@ -1,6 +1,12 @@
-﻿namespace CPUXRay.Services;
+﻿using CPUXRay.Models;
+using CPUXRay.Readers;
 
-public class CpuService
+namespace CPUXRay.Services;
+
+public static class CpuService
 {
-
+    public static CpuInfo GetCpuInfo()
+    {
+        return CpuReader.GetCpuInfo();
+    }
 }

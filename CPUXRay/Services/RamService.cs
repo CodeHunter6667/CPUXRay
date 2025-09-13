@@ -1,5 +1,12 @@
-﻿namespace CPUXRay.Services;
+﻿using CPUXRay.Models;
+using CPUXRay.Readers;
 
-public class RamService
+namespace CPUXRay.Services;
+
+public static class RamService
 {
+    public static RamInfo GetRamInfo()
+    {
+        return RamReader.GetRamInfo();
+    }
 }
