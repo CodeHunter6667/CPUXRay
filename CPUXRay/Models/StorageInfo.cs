@@ -1,4 +1,8 @@
-﻿namespace CPUXRay.Models;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Management;
+
+namespace CPUXRay.Models;
 
 public class StorageInfo
 {
