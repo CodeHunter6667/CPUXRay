@@ -1,4 +1,5 @@
-﻿using CPUXRay.Models;
+﻿using CPUXRay.Hardware;
+using CPUXRay.Models;
 using LibreHardwareMonitor.Hardware;
 using System;
 using System.Management;
@@ -25,30 +26,20 @@ public static class CpuReader
 
     private static CpuInfo GetCpuDynamicInfo(CpuInfo cpu)
     {
-        var computer = new Computer
+        foreach (var hardware in SensorManager.GetHardware(HardwareType.Cpu))
         {
-            IsCpuEnabled = true
-        };
-        computer.Open();
+            hardware.Update();
 
-        foreach (var hardware in computer.Hardware)
-        {
-            if (hardware.HardwareType == HardwareType.Cpu)
+            foreach (var sensor in hardware.Sensors)
             {
-                hardware.Update();
-
-                foreach (var sensor in hardware.Sensors)
-                {
-                    if (sensor.SensorType == SensorType.Temperature && sensor.Name.Contains("Package"))
-                        cpu.TemperatureCelsius = sensor.Value ?? 0;
-                    if (sensor.SensorType == SensorType.Load && sensor.Name.Contains("CPU Total"))
-                        cpu.UsagePercentage = sensor.Value ?? 0;
-                    if (sensor.SensorType == SensorType.Clock && sensor.Name.Contains("CPU Core #1"))
-                        cpu.CurrentClockGhz = (sensor.Value ?? 0) / 1000f;
-                }
+                if (sensor.SensorType == SensorType.Temperature && sensor.Name.Contains("Package"))
+                    cpu.TemperatureCelsius = sensor.Value ?? 0;
+                if (sensor.SensorType == SensorType.Load && sensor.Name.Contains("CPU Total"))
+                    cpu.UsagePercentage = sensor.Value ?? 0;
+                if (sensor.SensorType == SensorType.Clock && sensor.Name.Contains("Core #1"))
+                    cpu.CurrentClockGhz = (sensor.Value ?? 0) / 1000f;
             }
         }
-        computer.Close();
         return cpu;
     }
 

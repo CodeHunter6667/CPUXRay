@@ -17,7 +17,6 @@ public static class MotherboardReader
             board.Model = item["Model"]?.ToString() ?? string.Empty;
             board.Product = item["Product"]?.ToString() ?? string.Empty;
             board.SerialNumber = item["SerialNumber"]?.ToString() ?? string.Empty;
-            board.FormFactor = item["FormFactor"]?.ToString() ?? string.Empty;
         }
         return board;
     }

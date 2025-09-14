@@ -1,4 +1,5 @@
-﻿using CPUXRay.Models;
+﻿using CPUXRay.Hardware;
+using CPUXRay.Models;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using System;
@@ -32,6 +33,8 @@ public class HardwareMonitorService
     {
         Task.Run(() =>
         {
+            SensorManager.UpdateAll();
+
             var cpuTask = Task.Run(() => CpuService.GetCpuInfo());
             var ramTask = Task.Run(() => RamService.GetRamInfo());
             var gpuTask = Task.Run(() => GpuService.GetGpuInfo());

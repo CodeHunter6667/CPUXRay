@@ -1,8 +1,4 @@
-﻿using LibreHardwareMonitor.Hardware;
-using System;
-using System.Management;
-
-namespace CPUXRay.Models;
+﻿namespace CPUXRay.Models;
 
 public class CpuInfo
 {
