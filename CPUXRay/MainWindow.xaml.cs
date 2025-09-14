@@ -1,3 +1,4 @@
+using CPUXRay.ViewModel;
 using Microsoft.UI.Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -10,9 +11,11 @@ namespace CPUXRay
     /// </summary>
     public sealed partial class MainWindow : Window
     {
+        public MainViewModel ViewModel { get; set; }
         public MainWindow()
         {
             InitializeComponent();
+            ViewModel = new MainViewModel();
         }
     }
 }
