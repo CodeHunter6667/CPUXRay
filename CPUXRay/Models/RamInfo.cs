@@ -1,15 +1,11 @@
-﻿using System;
-using System.Management;
-using System.Runtime.InteropServices;
+﻿using System.Collections.Generic;
 
 namespace CPUXRay.Models;
 
 public class RamInfo
 {
-    public ulong TotalMemoryMB { get; set; }
-    public ulong UsedMemomryMB { get; set; }
-    public ulong AvailableMemoryMB { get; set; }
-    public string MemoryType { get; set; } = string.Empty;
-    public int SpeedMHz { get; set; }
-    public int SlotCount { get; set; }
+    public long TotalPhysicalMemory { get; set; } // Bytes
+    public long AvailableMemory { get; set; }
+    public double UsagePercentage { get; set; }
+    public List<MemoryModule> Modules { get; set; } = [];
 }

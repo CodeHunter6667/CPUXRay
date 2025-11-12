@@ -1,57 +1,90 @@
 ﻿using CPUXRay.Hardware;
 using CPUXRay.Models;
-using Microsoft.UI.Dispatching;
-using Microsoft.UI.Xaml;
+using CPUXRay.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Management;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CPUXRay.Services;
 
-public class HardwareMonitorService
+public class HardwareMonitorService : IHardwareService
 {
-    private readonly DispatcherTimer _timer;
-    private readonly DispatcherQueue _dispatcherQueue;
-    private readonly Action<CpuInfo, RamInfo, GpuInfo, List<StorageInfo>, MotherboardInfo> _onUpdate;
-
-    public HardwareMonitorService(DispatcherQueue dispatcherQueue, Action<CpuInfo, RamInfo, GpuInfo, List<StorageInfo>, MotherboardInfo> onUpdateCallback, int intervalSeconds = 2)
+    public async Task<CpuInfo> GetCpuInfoAsync()
     {
-        _dispatcherQueue = dispatcherQueue;
-        _onUpdate = onUpdateCallback;
-
-        _timer = new DispatcherTimer
+        return await Task.Run(() =>
         {
-            Interval = TimeSpan.FromSeconds(intervalSeconds)
-        };
-        _timer.Tick += Timer_Tick;
+            var cpuInfo = new CpuInfo();
+
+            using var searcher = new ManagementObjectSearcher(
+                "SELECT * FROM Win32_Processor");
+
+            foreach (ManagementObject obj in searcher.Get())
+            {
+                cpuInfo.Name = obj["Name"]?.ToString();
+                cpuInfo.Manufacturer = obj["Manufacturer"]?.ToString();
+                cpuInfo.Architecture = GetArchitecture(
+                    Convert.ToInt32(obj["Architecture"]));
+                cpuInfo.Cores = Convert.ToInt32(obj["NumberOfCores"]);
+                cpuInfo.LogicalProcessors = Convert.ToInt32(
+                    obj["NumberOfLogicalProcessors"]);
+                cpuInfo.MaxClockSpeed = Convert.ToDouble(
+                    obj["MaxClockSpeed"]);
+                cpuInfo.CurrentClockSpeed = Convert.ToDouble(
+                    obj["CurrentClockSpeed"]);
+                cpuInfo.Socket = obj["SocketDesignation"]?.ToString();
+                cpuInfo.ProcessorId = obj["ProcessorId"]?.ToString();
+                cpuInfo.L2CacheSize = Convert.ToInt32(
+                    obj["L2CacheSize"]);
+                cpuInfo.L3CacheSize = Convert.ToInt32(
+                    obj["L3CacheSize"]);
+            }
+
+            // Performance Counter para uso
+            using var cpuCounter = new PerformanceCounter(
+                "Processor", "% Processor Time", "_Total");
+            cpuCounter.NextValue();
+            Thread.Sleep(100);
+            cpuInfo.Usage = cpuCounter.NextValue();
+
+            return cpuInfo;
+        });
     }
 
-    public void Start() => _timer.Start();
-    public void Stop() => _timer.Stop();
-
-    private void Timer_Tick(object sender, object e)
+    public async Task<List<GpuInfo>> GetGpuInfoAsync()
     {
-        Task.Run(() =>
+        throw new System.NotImplementedException();
+    }
+
+    public async Task<RamInfo> GetMemoryInfoAsync()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public async Task<MotherboardInfo> GetMotherboardInfoAsync()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public async Task<List<StorageInfo>> GetStorageInfoAsync()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    private string GetArchitecture(int arch)
+    {
+        return arch switch
         {
-            SensorManager.UpdateAll();
-
-            var cpuTask = Task.Run(() => CpuService.GetCpuInfo());
-            var ramTask = Task.Run(() => RamService.GetRamInfo());
-            var gpuTask = Task.Run(() => GpuService.GetGpuInfo());
-            var storageTask = Task.Run(() => StorageService.GetStorageInfo());
-            var boardTask = Task.Run(() => MotherboardService.GetMotherboardInfo());
-            Task.WaitAll(cpuTask, ramTask, gpuTask, storageTask, boardTask);
-
-            var cpu = cpuTask.Result;
-            var ram = ramTask.Result;
-            var gpu = gpuTask.Result;
-            var storage = storageTask.Result;
-            var board = boardTask.Result;
-
-            _dispatcherQueue.TryEnqueue(() =>
-            {
-                _onUpdate?.Invoke(cpu, ram, gpu, storage, board);
-            });
-        });
+            0 => "x86",
+            1 => "MIPS",
+            2 => "Alpha",
+            3 => "PowerPC",
+            5 => "ARM",
+            6 => "Itanium",
+            9 => "x64",
+            12 => "ARM64",
+            _ => "Unknown"
+        };
     }
 }
