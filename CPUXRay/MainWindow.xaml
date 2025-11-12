@@ -29,13 +29,12 @@
                         <TextBlock Text="GPU: " FontWeight="Bold"/>
                         <TextBlock Text="{x:Bind ViewModel.Gpu.Name, Mode=OneWay}"/>
                         <TextBlock Text="Armazenamento: " FontWeight="Bold"/>
-                        <TextBlock Text="{x:Bind ViewModel.Storage[0].Model, Mode=OneWay}"/>
+                        <TextBlock Text="{x:Bind ViewModel.Storage[0].Model, Mode=OneWay}" />
                         <TextBlock Text="Placa-mãe: " FontWeight="Bold"/>
                         <TextBlock Text="{x:Bind ViewModel.Motherboard.Model, Mode=OneWay}"/>
                     </StackPanel>
                 </ScrollViewer>
             </controls:TabViewItem>
-        </controls:TabView>
 
             <controls:TabViewItem Header="CPU">
                 <ScrollViewer>
@@ -48,82 +47,66 @@
                         <TextBlock Text="{x:Bind ViewModel.Cpu.CurrentClockGhz, Mode=OneWay}" />
                         <TextBlock Text="Temperatura (°C): " FontWeight="Bold"/>
                         <TextBlock Text="{x:Bind ViewModel.Cpu.TemperatureCelsius, Mode=OneWay}" />
-                        <TextBlock Text="Fabricante: " FontWeight="Bold"/>
-                        <TextBlock Text="{x:Bind ViewModel.Cpu.Manufacturer, Mode=OneWay}" />
-                        <TextBlock Text="Arquitetura: " FontWeight="Bold"/>
-                        <TextBlock Text="{x:Bind ViewModel.Cpu.Architecture, Mode=OneWay}" />
                     </StackPanel>
                 </ScrollViewer>
             </controls:TabViewItem>
 
-        <controls:TabViewItem Header="RAM">
-            <ScrollViewer>
-                <StackPanel Padding="20">
-                    <TextBlock Text="Total (MB): " FontWeight="Bold"/>
-                    <TextBlock Text="{x:Bind ViewModel.Ram.TotalMemoryMB, Mode=OneWay}" />
-                    <TextBlock Text="Disponível (MB): " FontWeight="Bold"/>
-                    <TextBlock Text="{x:Bind ViewModel.Ram.AvailableMemoryMB, Mode=OneWay}" />
-                    <TextBlock Text="Tipo: " FontWeight="Bold"/>
-                    <TextBlock Text="{x:Bind ViewModel.Ram.MemoryType, Mode=OneWay}" />
-                    <TextBlock Text="Velocidade (MHz): " FontWeight="Bold"/>
-                    <TextBlock Text="{x:Bind ViewModel.Ram.SpeedMHz, Mode=OneWay}" />
-                </StackPanel>
-            </ScrollViewer>
-        </controls:TabViewItem>
+            <controls:TabViewItem Header="RAM">
+                <ScrollViewer>
+                    <StackPanel Padding="20">
+                        <TextBlock Text="Total (MB): " FontWeight="Bold"/>
+                        <TextBlock Text="{x:Bind ViewModel.Ram.TotalMemoryMB, Mode=OneWay}"/>
+                        <TextBlock Text="Usado (MB): " FontWeight="Bold"/>
+                        <TextBlock Text="{x:Bind ViewModel.Ram.UsedMemomryMB, Mode=OneWay}"/>
+                        <TextBlock Text="Disponível (MB): " FontWeight="Bold"/>
+                        <TextBlock Text="{x:Bind ViewModel.Ram.AvailableMemoryMB, Mode=OneWay}"/>
+                        <TextBlock Text="Tipo: " FontWeight="Bold"/>
+                        <TextBlock Text="{x:Bind ViewModel.Ram.MemoryType, Mode=OneWay}"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </controls:TabViewItem>
 
-        <controls:TabViewItem Header="GPU">
-            <ScrollViewer>
-                <StackPanel Padding="20">
-                    <TextBlock Text="Nome: " FontWeight="Bold"/>
-                    <TextBlock Text="{x:Bind ViewModel.Gpu.Name, Mode=OneWay}" />
-                    <TextBlock Text="Temperatura (°C): " FontWeight="Bold"/>
-                    <TextBlock Text="{x:Bind ViewModel.Gpu.TemperatureCelsius, Mode=OneWay}" />
-                    <TextBlock Text="Uso (%): " FontWeight="Bold"/>
-                    <TextBlock Text="{x:Bind ViewModel.Gpu.UsagePercentage, Mode=OneWay}" />
-                    <TextBlock Text="Clock (MHz): " FontWeight="Bold"/>
-                    <TextBlock Text="{x:Bind ViewModel.Gpu.CoreClockMHz, Mode=OneWay}" />
-                </StackPanel>
-            </ScrollViewer>
-        </controls:TabViewItem>
+            <controls:TabViewItem Header="GPU">
+                <ScrollViewer>
+                    <StackPanel Padding="20">
+                        <TextBlock Text="Nome: " FontWeight="Bold"/>
+                        <TextBlock Text="{x:Bind ViewModel.Gpu.Name, Mode=OneWay}"/>
+                        <TextBlock Text="Temperatura (°C): " FontWeight="Bold"/>
+                        <TextBlock Text="{x:Bind ViewModel.Gpu.TemperatureCelsius, Mode=OneWay}"/>
+                        <TextBlock Text="Uso (%): " FontWeight="Bold"/>
+                        <TextBlock Text="{x:Bind ViewModel.Gpu.UsagePercentage, Mode=OneWay}"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </controls:TabViewItem>
 
-        <controls:TabViewItem Header="Armazenamento">
-            <ScrollViewer>
-                <StackPanel Padding="20">
-                    <ItemsControl ItemsSource="{x:Bind ViewModel.Storage, Mode=OneWay}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="models:StorageInfo">
-                                <StackPanel Margin="0,0,0,20">
-                                    <TextBlock Text="Unidade: " FontWeight="Bold"/>
-                                    <TextBlock Text="{x:Bind DriverLetter}" />
-                                    <TextBlock Text="Modelo: " FontWeight="Bold"/>
-                                    <TextBlock Text="{x:Bind Model}" />
-                                    <TextBlock Text="Tipo: " FontWeight="Bold"/>
-                                    <TextBlock Text="{x:Bind Type}" />
-                                    <TextBlock Text="Espaço Total (GB): " FontWeight="Bold"/>
-                                    <TextBlock Text="{x:Bind TotalSpaceGB}" />
-                                    <TextBlock Text="Espaço Livre (GB): " FontWeight="Bold"/>
-                                    <TextBlock Text="{x:Bind FreeSpaceGB}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </StackPanel>
-            </ScrollViewer>
-        </controls:TabViewItem>
+            <controls:TabViewItem Header="Armazenamento">
+                <ScrollViewer>
+                    <StackPanel Padding="20">
+                        <TextBlock Text="Discos Detectados" FontSize="18" Margin="0,0,0,10"/>
+                        <ItemsControl ItemsSource="{x:Bind ViewModel.Storage, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="models:StorageInfo">
+                                    <StackPanel Margin="0,0,0,12">
+                                        <TextBlock Text="{x:Bind Model}" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{x:Bind DriverLetter}"/>
+                                        <TextBlock Text="{x:Bind TotalSpaceGB, Mode=OneWay, Converter={StaticResource GbFormatConverter}}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </controls:TabViewItem>
 
-        <controls:TabViewItem Header="Placa-mãe">
-            <ScrollViewer>
-                <StackPanel Padding="20">
-                    <TextBlock Text="Fabricante: " FontWeight="Bold"/>
-                    <TextBlock Text="{x:Bind ViewModel.Motherboard.Manufacturer, Mode=OneWay}" />
-                    <TextBlock Text="Modelo: " FontWeight="Bold"/>
-                    <TextBlock Text="{x:Bind ViewModel.Motherboard.Model, Mode=OneWay}" />
-                    <TextBlock Text="Versão da BIOS: " FontWeight="Bold"/>
-                    <TextBlock Text="{x:Bind ViewModel.Motherboard.BiosVersion, Mode=OneWay}" />
-                    <TextBlock Text="Slots de Memória: " FontWeight="Bold"/>
-                    <TextBlock Text="{x:Bind ViewModel.Motherboard.MemorySlots, Mode=OneWay}" />
-                </StackPanel>
-            </ScrollViewer>
-        </controls:TabViewItem>
+            <controls:TabViewItem Header="Placa-mãe">
+                <ScrollViewer>
+                    <StackPanel Padding="20">
+                        <TextBlock Text="Modelo: " FontWeight="Bold"/>
+                        <TextBlock Text="{x:Bind ViewModel.Motherboard.Model, Mode=OneWay}"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </controls:TabViewItem>
+
+        </controls:TabView>
     </Grid>
 </Window>

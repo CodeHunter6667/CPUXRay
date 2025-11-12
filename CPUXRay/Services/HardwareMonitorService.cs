@@ -1,4 +1,5 @@
-﻿using CPUXRay.Models;
+﻿using CPUXRay.Hardware;
+using CPUXRay.Models;
 using CPUXRay.Services.Interfaces;
 using System;
 using System.Collections.Generic;
