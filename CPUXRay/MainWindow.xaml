@@ -37,20 +37,24 @@
             </controls:TabViewItem>
         </controls:TabView>
 
-        <controls:TabViewItem Header="CPU">
-            <ScrollViewer>
-                <StackPanel Padding="20">
-                    <TextBlock Text="Nome: " FontWeight="Bold"/>
-                    <TextBlock Text="{x:Bind ViewModel.Cpu.Name, Mode=OneWay}" />
-                    <TextBlock Text="Cores: " FontWeight="Bold"/>
-                    <TextBlock Text="{x:Bind ViewModel.Cpu.CoreCount, Mode=OneWay}" />
-                    <TextBlock Text="Clock Atual (GHz): " FontWeight="Bold"/>
-                    <TextBlock Text="{x:Bind ViewModel.Cpu.CurrentClockGhz, Mode=OneWay}" />
-                    <TextBlock Text="Temperatura (°C): " FontWeight="Bold"/>
-                    <TextBlock Text="{x:Bind ViewModel.Cpu.TemperatureCelsius, Mode=OneWay}" />
-                </StackPanel>
-            </ScrollViewer>
-        </controls:TabViewItem>
+            <controls:TabViewItem Header="CPU">
+                <ScrollViewer>
+                    <StackPanel Padding="20">
+                        <TextBlock Text="Nome: " FontWeight="Bold"/>
+                        <TextBlock Text="{x:Bind ViewModel.Cpu.Name, Mode=OneWay}" />
+                        <TextBlock Text="Cores: " FontWeight="Bold"/>
+                        <TextBlock Text="{x:Bind ViewModel.Cpu.CoreCount, Mode=OneWay}" />
+                        <TextBlock Text="Clock Atual (GHz): " FontWeight="Bold"/>
+                        <TextBlock Text="{x:Bind ViewModel.Cpu.CurrentClockGhz, Mode=OneWay}" />
+                        <TextBlock Text="Temperatura (°C): " FontWeight="Bold"/>
+                        <TextBlock Text="{x:Bind ViewModel.Cpu.TemperatureCelsius, Mode=OneWay}" />
+                        <TextBlock Text="Fabricante: " FontWeight="Bold"/>
+                        <TextBlock Text="{x:Bind ViewModel.Cpu.Manufacturer, Mode=OneWay}" />
+                        <TextBlock Text="Arquitetura: " FontWeight="Bold"/>
+                        <TextBlock Text="{x:Bind ViewModel.Cpu.Architecture, Mode=OneWay}" />
+                    </StackPanel>
+                </ScrollViewer>
+            </controls:TabViewItem>
 
         <controls:TabViewItem Header="RAM">
             <ScrollViewer>
