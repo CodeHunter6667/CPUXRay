@@ -1,0 +1,180 @@
+<Window
+    x:Class="HardwareMonitorInterface.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="using:HardwareMonitorInterface"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    mc:Ignorable="d">
+
+    <Grid x:Name="RootGrid" Padding="12">
+        <!-- TabView do WinUI, em vez de TabControl/TabItem -->
+        <muxc:TabView x:Name="MainTabView" Margin="0">
+
+            <!-- CPU -->
+            <muxc:TabViewItem Header="CPU">
+                <ScrollViewer>
+                    <StackPanel Margin="12">
+                        <TextBlock Text="{Binding CpuName}"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <StackPanel Margin="0,0,12,0">
+                                <TextBlock Text="Núcleos físicos:"/>
+                                <TextBlock Text="{Binding CpuCores}"/>
+                            </StackPanel>
+
+                            <StackPanel Margin="0,0,12,0">
+                                <TextBlock Text="Núcleos lógicos:"/>
+                                <TextBlock Text="{Binding CpuLogical}"/>
+                            </StackPanel>
+
+                            <StackPanel>
+                                <TextBlock Text="Clock máximo (MHz):"/>
+                                <TextBlock Text="{Binding CpuMaxClockMHz}"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <TextBlock Text="Uso da CPU:" Margin="0,0,0,4"/>
+                        <ProgressBar Value="{Binding CpuUsage}"
+                                     Maximum="100"
+                                     Height="18"
+                                     Margin="0,0,0,4"/>
+
+                        <!-- Sem StringFormat; usa Runs pra montar o texto -->
+                        <TextBlock>
+                            <Run Text="Uso: "/>
+                            <Run Text="{Binding CpuUsage}"/>
+                            <Run Text="%"/>
+                        </TextBlock>
+                    </StackPanel>
+                </ScrollViewer>
+            </muxc:TabViewItem>
+
+            <!-- Memória -->
+            <muxc:TabViewItem Header="Memória">
+                <ScrollViewer>
+                    <StackPanel Margin="12" Spacing="8">
+                        <TextBlock Text="Memória (MB)"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"/>
+
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <StackPanel>
+                                <TextBlock Text="Total:"/>
+                                <TextBlock Text="{Binding MemTotalMB}"/>
+                            </StackPanel>
+
+                            <StackPanel>
+                                <TextBlock Text="Em uso:"/>
+                                <TextBlock Text="{Binding MemUsedMB}"/>
+                            </StackPanel>
+
+                            <StackPanel>
+                                <TextBlock Text="Livre:"/>
+                                <TextBlock Text="{Binding MemFreeMB}"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <TextBlock Text="Uso da memória:"/>
+                        <ProgressBar Value="{Binding MemUsagePct}"
+                                     Maximum="100"
+                                     Height="18"/>
+
+                        <TextBlock>
+                            <Run Text="Uso: "/>
+                            <Run Text="{Binding MemUsagePct}"/>
+                            <Run Text="%"/>
+                        </TextBlock>
+                    </StackPanel>
+                </ScrollViewer>
+            </muxc:TabViewItem>
+
+            <!-- Disco -->
+            <muxc:TabViewItem Header="Disco">
+                <ScrollViewer>
+                    <StackPanel Margin="12" Spacing="8">
+                        <TextBlock Text="Disco"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"/>
+
+                        <TextBlock Text="{Binding DiskName}" />
+
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <StackPanel>
+                                <TextBlock Text="Capacidade (GB):"/>
+                                <TextBlock Text="{Binding DiskTotalGB}"/>
+                            </StackPanel>
+
+                            <StackPanel>
+                                <TextBlock Text="Livre (GB):"/>
+                                <TextBlock Text="{Binding DiskFreeGB}"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <TextBlock Text="Uso do disco:"/>
+                        <ProgressBar Value="{Binding DiskUsagePct}"
+                                     Maximum="100"
+                                     Height="18"/>
+
+                        <TextBlock>
+                            <Run Text="Uso: "/>
+                            <Run Text="{Binding DiskUsagePct}"/>
+                            <Run Text="%"/>
+                        </TextBlock>
+                    </StackPanel>
+                </ScrollViewer>
+            </muxc:TabViewItem>
+
+            <!-- Placa Mãe -->
+            <muxc:TabViewItem Header="Placa Mãe">
+                <ScrollViewer>
+                    <StackPanel Margin="12" Spacing="8">
+                        <TextBlock Text="Placa Mãe"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"/>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Fabricante: " />
+                            <TextBlock Text="{Binding MotherboardManufacturer}" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Modelo: " />
+                            <TextBlock Text="{Binding MotherboardModel}" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </muxc:TabViewItem>
+
+            <!-- Placa de Vídeo -->
+            <muxc:TabViewItem Header="Placa de Vídeo">
+                <ScrollViewer>
+                    <StackPanel Margin="12" Spacing="8">
+                        <TextBlock Text="Placa de Vídeo"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"/>
+
+                        <TextBlock Text="{Binding GpuName}" />
+
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <StackPanel>
+                                <TextBlock Text="Memória (MB):"/>
+                                <TextBlock Text="{Binding GpuMemoryMB}"/>
+                            </StackPanel>
+
+                            <StackPanel>
+                                <TextBlock Text="Driver:"/>
+                                <TextBlock Text="{Binding GpuDriverVersion}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </muxc:TabViewItem>
+
+        </muxc:TabView>
+    </Grid>
+</Window>
