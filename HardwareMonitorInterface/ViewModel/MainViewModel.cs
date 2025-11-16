@@ -45,6 +45,8 @@ namespace HardwareMonitorInterface.ViewModels
         private double _diskFreeGB;
         public int DiskUsagePct { get => _diskUsagePct; set { _diskUsagePct = value; Raise(nameof(DiskUsagePct)); } }
         private int _diskUsagePct;
+        public string DiskModel { get => _diskModel; set { _diskModel = value; Raise(nameof(DiskModel)); } }
+        private string _diskModel;
 
         // Placa Mãe
         public string MotherboardManufacturer { get => _motherboardManufacturer; set { _motherboardManufacturer = value; Raise(nameof(MotherboardManufacturer)); } }
@@ -105,15 +107,17 @@ namespace HardwareMonitorInterface.ViewModels
                         DiskTotalGB = first.CapacidadeTotalGBDisco;
                         DiskFreeGB = first.EspacoLivreGBDisco;
                         DiskUsagePct = first.PercentualUsoDisco;
+                        DiskModel = first.Modelo;
                     }
                 }
                 else
                 {
                     _discos.Clear();
-                    DiskName = null;
+                    DiskName = string.Empty;
                     DiskTotalGB = 0;
                     DiskFreeGB = 0;
                     DiskUsagePct = 0;
+                    DiskModel = string.Empty;
                 }
             }
 

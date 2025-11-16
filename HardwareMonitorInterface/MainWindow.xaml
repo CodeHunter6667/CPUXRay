@@ -110,6 +110,13 @@
                                             <TextBlock Text="{Binding NomeDisco}" FontWeight="SemiBold"/>
                                             <StackPanel Orientation="Horizontal" Spacing="12">
                                                 <StackPanel>
+                                                    <TextBlock Text="Modelo:"/>
+                                                    <TextBlock Text="{Binding Modelo}"/>
+                                                </StackPanel>
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                                <StackPanel>
                                                     <TextBlock Text="Capacidade (GB):"/>
                                                     <TextBlock Text="{Binding CapacidadeTotalGBDisco}"/>
                                                 </StackPanel>
@@ -122,13 +129,13 @@
 
                                             <TextBlock Text="Uso do disco:"/>
                                             <ProgressBar Value="{Binding PercentualUsoDisco}"
-                                                         Maximum="100"
-                                                         Height="18"/>
+                                 Maximum="100"
+                                 Height="18"/>
 
                                             <TextBlock>
-                                                <Run Text="Uso: "/>
-                                                <Run Text="{Binding PercentualUsoDisco}"/>
-                                                <Run Text="%"/>
+                        <Run Text="Uso: "/>
+                        <Run Text="{Binding PercentualUsoDisco}"/>
+                        <Run Text="%"/>
                                             </TextBlock>
                                         </StackPanel>
                                     </Border>

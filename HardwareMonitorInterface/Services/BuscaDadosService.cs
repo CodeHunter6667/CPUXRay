@@ -79,7 +79,39 @@ public class BuscaDadosService
                 double espacoLivreGB = Math.Round(espacoLivreBytes / (1024 * 1024 * 1024), 2);
                 int percentualUsoDisco = (int)(((capacidadeTotalBytes - espacoLivreBytes) / capacidadeTotalBytes) * 100);
 
-                var d = new Disco(deviceId, capacidadeTotalGB, espacoLivreGB, percentualUsoDisco);
+                // Tenta mapear o logical disk -> partition -> disk drive para obter modelo/marca
+                string modelo = string.Empty;
+                try
+                {
+                    // Associators of logical disk -> partition
+                    string assocPartitionsQuery = $"ASSOCIATORS OF {{Win32_LogicalDisk.DeviceID='{deviceId}'}} WHERE AssocClass=Win32_LogicalDiskToPartition";
+                    var partitions = new ManagementObjectSearcher(assocPartitionsQuery).Get();
+                    foreach (ManagementObject partition in partitions)
+                    {
+                        var partitionId = partition["DeviceID"]?.ToString();
+                        if (string.IsNullOrEmpty(partitionId))
+                            continue;
+
+                        // Associators of partition -> disk drive
+                        string assocDrivesQuery = $"ASSOCIATORS OF {{Win32_DiskPartition.DeviceID='{partitionId}'}} WHERE AssocClass=Win32_DiskDriveToDiskPartition";
+                        var drives = new ManagementObjectSearcher(assocDrivesQuery).Get();
+                        foreach (ManagementObject drive in drives)
+                        {
+                            modelo = drive["Model"]?.ToString() ?? string.Empty;
+                            break;
+                        }
+
+                        // If found a drive for this partition, break
+                        if (!string.IsNullOrEmpty(modelo))
+                            break;
+                    }
+                }
+                catch
+                {
+                    // não falhar inteiro se mapear drive não for possível — manter strings vazias
+                }
+
+                var d = new Disco(deviceId, capacidadeTotalGB, espacoLivreGB, percentualUsoDisco, modelo);
                 discos.Add(d);
             }
         }
@@ -123,7 +155,6 @@ public class BuscaDadosService
         sistema.Cpu = new Cpu(cpu.NomeProcessador, cpu.NucleosFisicosProcessador, cpu.NucleosLogicosProcessador, cpu.FrequenciaMaximaMHzProcessador, cpu.UsoPorcentagemProcessador);
         sistema.Memoria = new Memoria(ram.TotalMBMemoria, ram.TotalEmUsoMBMemoria, ram.TotalLivreMBMemoria, ram.UsoPorcentagemMemoria);
 
-        // Se precisar manter a assinatura atual (um único Disco), atribui o primeiro disco encontrado ou um novo objeto vazio.
         sistema.Discos = discos;
 
         sistema.PlacaMae = new PlacaMae(placaMae.FabricantePlacaMae, placaMae.ModeloPlacaMae);
