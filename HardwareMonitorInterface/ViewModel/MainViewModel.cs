@@ -1,6 +1,7 @@
-using HardwareMonitor.Models;
-using System;
+using HardwareMonitorInterface.Models;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace HardwareMonitorInterface.ViewModels
 {
@@ -31,7 +32,11 @@ namespace HardwareMonitorInterface.ViewModels
         public int MemUsagePct { get => _memUsagePct; set { _memUsagePct = value; Raise(nameof(MemUsagePct)); } }
         private int _memUsagePct;
 
-        // Disco
+        // Discos - collection to support multiple disks
+        public ObservableCollection<Disco> Discos { get => _discos; }
+        private readonly ObservableCollection<Disco> _discos = new();
+
+        // Back-compat: single-disk properties still available and populated from first disk (if any)
         public string DiskName { get => _diskName; set { _diskName = value; Raise(nameof(DiskName)); } }
         private string _diskName;
         public double DiskTotalGB { get => _diskTotalGB; set { _diskTotalGB = value; Raise(nameof(DiskTotalGB)); } }
@@ -57,46 +62,72 @@ namespace HardwareMonitorInterface.ViewModels
 
         public MainViewModel() { }
 
-        public void UpdateFromSistema(Sistema s)
+        /// <summary>
+        /// Atualiza propriedades a partir de Sistema.
+        /// Se <paramref name="updateDiscos"/> for true, atualiza a coleção Discos e as propriedades de single-disk (compatibilidade).
+        /// Caso contrário, mantém os discos como estão (não serão substituídos a cada tick).
+        /// </summary>
+        public void UpdateFromSistema(Sistema s, bool updateDiscos = false)
         {
             if (s == null) return;
 
-            if (s.cpu != null)
+            if (s.Cpu != null)
             {
-                CpuName = s.cpu.nomeProcessador;
-                CpuCores = s.cpu.nucleosFisicosProcessador;
-                CpuLogical = s.cpu.nucleosLogicosProcessador;
-                CpuMaxClockMHz = s.cpu.frequenciaMaximaMHzProcessador;
-                CpuUsage = s.cpu.usoPorcentagemProcessador;
+                CpuName = s.Cpu.NomeProcessador;
+                CpuCores = s.Cpu.NucleosFisicosProcessador;
+                CpuLogical = s.Cpu.NucleosLogicosProcessador;
+                CpuMaxClockMHz = s.Cpu.FrequenciaMaximaMHzProcessador;
+                CpuUsage = s.Cpu.UsoPorcentagemProcessador;
             }
 
-            if (s.memoria != null)
+            if (s.Memoria != null)
             {
-                MemTotalMB = s.memoria.totalMBMemoria;
-                MemUsedMB = s.memoria.totalEmUsoMBMemoria;
-                MemFreeMB = s.memoria.totalLivreMBMemoria;
-                MemUsagePct = s.memoria.usoPorcentagemMemoria;
+                MemTotalMB = s.Memoria.TotalMBMemoria;
+                MemUsedMB = s.Memoria.TotalEmUsoMBMemoria;
+                MemFreeMB = s.Memoria.TotalLivreMBMemoria;
+                MemUsagePct = s.Memoria.UsoPorcentagemMemoria;
             }
 
-            if (s.disco != null)
+            if (updateDiscos)
             {
-                DiskName = s.disco.nomeDisco;
-                DiskTotalGB = s.disco.capacidadeTotalGBDisco;
-                DiskFreeGB = s.disco.espacoLivreGBDisco;
-                DiskUsagePct = s.disco.percentualUsoDisco;
+                if (s.Discos != null)
+                {
+                    _discos.Clear();
+                    foreach (var disco in s.Discos)
+                    {
+                        _discos.Add(disco);
+                    }
+
+                    var first = s.Discos.FirstOrDefault();
+                    if (first != null)
+                    {
+                        DiskName = first.NomeDisco;
+                        DiskTotalGB = first.CapacidadeTotalGBDisco;
+                        DiskFreeGB = first.EspacoLivreGBDisco;
+                        DiskUsagePct = first.PercentualUsoDisco;
+                    }
+                }
+                else
+                {
+                    _discos.Clear();
+                    DiskName = null;
+                    DiskTotalGB = 0;
+                    DiskFreeGB = 0;
+                    DiskUsagePct = 0;
+                }
             }
 
-            if (s.placaMae != null)
+            if (s.PlacaMae != null)
             {
-                MotherboardManufacturer = s.placaMae.fabricantePlacaMae;
-                MotherboardModel = s.placaMae.modeloPlacaMae;
+                MotherboardManufacturer = s.PlacaMae.FabricantePlacaMae;
+                MotherboardModel = s.PlacaMae.ModeloPlacaMae;
             }
 
-            if (s.placaVideo != null)
+            if (s.PlacaVideo != null)
             {
-                GpuName = s.placaVideo.nomePlacaVideo;
-                GpuMemoryMB = s.placaVideo.memoriaTotalMBPlacaVideo;
-                GpuDriverVersion = s.placaVideo.versaoDriverPlacaVideo;
+                GpuName = s.PlacaVideo.NomePlacaVideo;
+                GpuMemoryMB = s.PlacaVideo.MemoriaTotalMBPlacaVideo;
+                GpuDriverVersion = s.PlacaVideo.VersaoDriverPlacaVideo;
             }
         }
     }

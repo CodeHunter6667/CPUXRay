@@ -1,5 +1,5 @@
-using HardwareMonitor.Services;
-using HardwareMonitor.Models;
+using HardwareMonitorInterface.Services;
+using HardwareMonitorInterface.Models;
 using HardwareMonitorInterface.ViewModels;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
@@ -13,6 +13,10 @@ namespace HardwareMonitorInterface
         private readonly MainViewModel _vm;
         private readonly BuscaDadosService _service;
         private readonly DispatcherQueueTimer _timer;
+
+        // controla com que frequência os discos são atualizados (em ticks; o timer é 1s)
+        private int _diskTickCounter;
+        private const int DiskUpdateIntervalTicks = 30; // exemplo: 30s
 
         public MainWindow()
         {
@@ -29,6 +33,9 @@ namespace HardwareMonitorInterface
             _timer.Interval = TimeSpan.FromSeconds(1); // atualizar a cada segundo
             _timer.Tick += Timer_Tick;
             _timer.Start();
+
+            // Força atualização inicial dos discos na primeira carga
+            _diskTickCounter = DiskUpdateIntervalTicks;
 
             // Primeira carga imediata
             _ = RefreshAsync();
@@ -48,8 +55,17 @@ namespace HardwareMonitorInterface
                 Sistema dados = await Task.Run(() => _service.BuscarDadosSistema());
                 if (dados != null)
                 {
+                    // decide se atualiza discos nesta iteração
+                    _diskTickCounter++;
+                    bool updateDiscos = false;
+                    if (_diskTickCounter >= DiskUpdateIntervalTicks)
+                    {
+                        updateDiscos = true;
+                        _diskTickCounter = 0;
+                    }
+
                     // Atualiza ViewModel (propriedades disparam INotifyPropertyChanged)
-                    _vm.UpdateFromSistema(dados);
+                    _vm.UpdateFromSistema(dados, updateDiscos);
                 }
             }
             catch (Exception)

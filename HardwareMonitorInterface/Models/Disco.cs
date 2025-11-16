@@ -1,20 +1,20 @@
-﻿namespace HardwareMonitor.Models
+﻿namespace HardwareMonitorInterface.Models
 {
-    internal class Disco
+    public class Disco
     {
         public Disco() { }
 
         public Disco(string nomeDisco, double capacidadeTotalGBDisco, double espacoLivreGBDisco, int percentualUsoDisco)
         {
-            this.nomeDisco = nomeDisco;
-            this.capacidadeTotalGBDisco = capacidadeTotalGBDisco;
-            this.espacoLivreGBDisco = espacoLivreGBDisco;
-            this.percentualUsoDisco = percentualUsoDisco;
+            NomeDisco = nomeDisco;
+            CapacidadeTotalGBDisco = capacidadeTotalGBDisco;
+            EspacoLivreGBDisco = espacoLivreGBDisco;
+            PercentualUsoDisco = percentualUsoDisco;
         }
 
-        public string nomeDisco { get; set; }
-        public double capacidadeTotalGBDisco { get; set; }
-        public double espacoLivreGBDisco { get; set; }
-        public int percentualUsoDisco { get; set; }
+        public string NomeDisco { get; set; } = string.Empty;
+        public double CapacidadeTotalGBDisco { get; set; }
+        public double EspacoLivreGBDisco { get; set; }
+        public int PercentualUsoDisco { get; set; }
     }
 }

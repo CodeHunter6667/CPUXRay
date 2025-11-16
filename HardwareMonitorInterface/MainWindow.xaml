@@ -93,38 +93,49 @@
                 </ScrollViewer>
             </muxc:TabViewItem>
 
-            <!-- Disco -->
+            <!-- Disco (suporta múltiplos discos) -->
             <muxc:TabViewItem Header="Disco">
                 <ScrollViewer>
                     <StackPanel Margin="12" Spacing="8">
-                        <TextBlock Text="Disco"
+                        <TextBlock Text="Discos"
                                    FontSize="18"
                                    FontWeight="SemiBold"/>
 
-                        <TextBlock Text="{Binding DiskName}" />
+                        <!-- ItemsControl binds to the Discos collection in the view model -->
+                        <ItemsControl ItemsSource="{Binding Discos}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" Padding="8">
+                                        <StackPanel Spacing="6">
+                                            <TextBlock Text="{Binding NomeDisco}" FontWeight="SemiBold"/>
+                                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                                <StackPanel>
+                                                    <TextBlock Text="Capacidade (GB):"/>
+                                                    <TextBlock Text="{Binding CapacidadeTotalGBDisco}"/>
+                                                </StackPanel>
 
-                        <StackPanel Orientation="Horizontal" Spacing="12">
-                            <StackPanel>
-                                <TextBlock Text="Capacidade (GB):"/>
-                                <TextBlock Text="{Binding DiskTotalGB}"/>
-                            </StackPanel>
+                                                <StackPanel>
+                                                    <TextBlock Text="Livre (GB):"/>
+                                                    <TextBlock Text="{Binding EspacoLivreGBDisco}"/>
+                                                </StackPanel>
+                                            </StackPanel>
 
-                            <StackPanel>
-                                <TextBlock Text="Livre (GB):"/>
-                                <TextBlock Text="{Binding DiskFreeGB}"/>
-                            </StackPanel>
-                        </StackPanel>
+                                            <TextBlock Text="Uso do disco:"/>
+                                            <ProgressBar Value="{Binding PercentualUsoDisco}"
+                                                         Maximum="100"
+                                                         Height="18"/>
 
-                        <TextBlock Text="Uso do disco:"/>
-                        <ProgressBar Value="{Binding DiskUsagePct}"
-                                     Maximum="100"
-                                     Height="18"/>
+                                            <TextBlock>
+                                                <Run Text="Uso: "/>
+                                                <Run Text="{Binding PercentualUsoDisco}"/>
+                                                <Run Text="%"/>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
 
-                        <TextBlock>
-                            <Run Text="Uso: "/>
-                            <Run Text="{Binding DiskUsagePct}"/>
-                            <Run Text="%"/>
-                        </TextBlock>
                     </StackPanel>
                 </ScrollViewer>
             </muxc:TabViewItem>

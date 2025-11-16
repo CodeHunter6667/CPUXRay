@@ -1,21 +1,20 @@
-﻿namespace HardwareMonitor.Models
-{
-    internal class Memoria
-    {
-        public Memoria()
-        {
-        }   
-        public Memoria(int totalMBMemoria, int totalEmUsoMBMemoria, int totalMemoriaLivreMB, int usoPorcentagemMemoria)
-        {
-            this.totalMBMemoria = totalMBMemoria;
-            this.totalEmUsoMBMemoria = totalEmUsoMBMemoria;
-            this.totalLivreMBMemoria= totalMemoriaLivreMB;
-            this.usoPorcentagemMemoria = usoPorcentagemMemoria;
-        }
+﻿namespace HardwareMonitorInterface.Models;
 
-        public int totalMBMemoria { get; set; }
-        public int totalEmUsoMBMemoria { get; set; }
-        public int totalLivreMBMemoria{ get; set; }
-        public int usoPorcentagemMemoria { get; set; }
+public class Memoria
+{
+    public Memoria()
+    {
+    }   
+    public Memoria(int totalMBMemoria, int totalEmUsoMBMemoria, int totalMemoriaLivreMB, int usoPorcentagemMemoria)
+    {
+        TotalMBMemoria = totalMBMemoria;
+        TotalEmUsoMBMemoria = totalEmUsoMBMemoria;
+        TotalLivreMBMemoria= totalMemoriaLivreMB;
+        UsoPorcentagemMemoria = usoPorcentagemMemoria;
     }
+
+    public int TotalMBMemoria { get; set; }
+    public int TotalEmUsoMBMemoria { get; set; }
+    public int TotalLivreMBMemoria{ get; set; }
+    public int UsoPorcentagemMemoria { get; set; }
 }

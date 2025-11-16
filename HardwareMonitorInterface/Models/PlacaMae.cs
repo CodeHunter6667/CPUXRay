@@ -1,17 +1,16 @@
-﻿namespace HardwareMonitor.Models
-{
-    internal class PlacaMae
-    {
-        public PlacaMae()
-        {
-        }   
-        public PlacaMae(string fabricantePlacaMae, string modeloPlacaMae)
-        {
-            this.fabricantePlacaMae = fabricantePlacaMae;
-            this.modeloPlacaMae = modeloPlacaMae;
-        }
+﻿namespace HardwareMonitorInterface.Models;
 
-        public string fabricantePlacaMae { get; set; }
-        public string modeloPlacaMae { get; set; }
+public class PlacaMae
+{
+    public PlacaMae()
+    {
+    }   
+    public PlacaMae(string fabricantePlacaMae, string modeloPlacaMae)
+    {
+        FabricantePlacaMae = fabricantePlacaMae;
+        ModeloPlacaMae = modeloPlacaMae;
     }
+
+    public string FabricantePlacaMae { get; set; } = string.Empty;
+    public string ModeloPlacaMae { get; set; } = string.Empty;
 }

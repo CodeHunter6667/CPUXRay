@@ -1,21 +1,22 @@
-﻿namespace HardwareMonitor.Models
+﻿using System.Collections.Generic;
+
+namespace HardwareMonitorInterface.Models;
+
+public class Sistema
 {
-    internal class Sistema
+    public Cpu Cpu { get; set; } = new();
+    public Memoria Memoria { get; set; } = new();
+    public List<Disco> Discos { get; set; } = new();
+    public PlacaMae PlacaMae { get; set; } = new();
+    public PlacaVideo PlacaVideo { get; set; } = new();
+    public Sistema() { 
+    }
+    public Sistema(Cpu cpu, Memoria memoria, List<Disco> discos, PlacaMae placaMae, PlacaVideo placaVideo)
     {
-        public Cpu cpu { get; set; }
-        public Memoria memoria { get; set; }
-        public Disco disco { get; set; }
-        public PlacaMae placaMae { get; set; }
-        public PlacaVideo placaVideo { get; set; }
-        public Sistema() { 
-        }
-        public Sistema(Cpu cpu, Memoria memoria, Disco disco, PlacaMae placaMae, PlacaVideo placaVideo)
-        {
-            this.cpu = cpu;
-            this.memoria = memoria;
-            this.disco = disco;
-            this.placaMae = placaMae;
-            this.placaVideo = placaVideo;
-        }
+        Cpu = cpu;
+        Memoria = memoria;
+        Discos = discos;
+        PlacaMae = placaMae;
+        PlacaVideo = placaVideo;
     }
 }
