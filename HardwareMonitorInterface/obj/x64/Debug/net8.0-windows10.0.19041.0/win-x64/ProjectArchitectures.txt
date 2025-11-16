@@ -1,1 +1,0 @@
-C:\Users\pedro\source\repos\HardwareMonitorInterface\HardwareMonitorInterface\HardwareMonitorInterface.csproj;x64

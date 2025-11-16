@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\pedro\\source\\repos\\HardwareMonitorInterface\\HardwareMonitorInterface\\HardwareMonitorInterface.csproj": {}
+    "C:\\Users\\PICHAU\\source\\repos\\CPUXRay\\HardwareMonitorInterface\\HardwareMonitorInterface.csproj": {}
   },
   "projects": {
-    "C:\\Users\\pedro\\source\\repos\\HardwareMonitorInterface\\HardwareMonitorInterface\\HardwareMonitorInterface.csproj": {
+    "C:\\Users\\PICHAU\\source\\repos\\CPUXRay\\HardwareMonitorInterface\\HardwareMonitorInterface.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\pedro\\source\\repos\\HardwareMonitorInterface\\HardwareMonitorInterface\\HardwareMonitorInterface.csproj",
+        "projectUniqueName": "C:\\Users\\PICHAU\\source\\repos\\CPUXRay\\HardwareMonitorInterface\\HardwareMonitorInterface.csproj",
         "projectName": "HardwareMonitorInterface",
-        "projectPath": "C:\\Users\\pedro\\source\\repos\\HardwareMonitorInterface\\HardwareMonitorInterface\\HardwareMonitorInterface.csproj",
-        "packagesPath": "C:\\Users\\pedro\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\pedro\\source\\repos\\HardwareMonitorInterface\\HardwareMonitorInterface\\obj\\",
+        "projectPath": "C:\\Users\\PICHAU\\source\\repos\\CPUXRay\\HardwareMonitorInterface\\HardwareMonitorInterface.csproj",
+        "packagesPath": "C:\\Users\\PICHAU\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\PICHAU\\source\\repos\\CPUXRay\\HardwareMonitorInterface\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\pedro\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\PICHAU\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -76,19 +76,7 @@
           "warn": true,
           "downloadDependencies": [
             {
-              "name": "Microsoft.AspNetCore.App.Runtime.win-arm64",
-              "version": "[8.0.22, 8.0.22]"
-            },
-            {
               "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
-              "version": "[8.0.22, 8.0.22]"
-            },
-            {
-              "name": "Microsoft.AspNetCore.App.Runtime.win-x86",
-              "version": "[8.0.22, 8.0.22]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Runtime.win-arm64",
               "version": "[8.0.22, 8.0.22]"
             },
             {
@@ -96,23 +84,11 @@
               "version": "[8.0.22, 8.0.22]"
             },
             {
-              "name": "Microsoft.NETCore.App.Runtime.win-x86",
-              "version": "[8.0.22, 8.0.22]"
-            },
-            {
               "name": "Microsoft.Windows.SDK.NET.Ref",
               "version": "[10.0.19041.57, 10.0.19041.57]"
             },
             {
-              "name": "Microsoft.WindowsDesktop.App.Runtime.win-arm64",
-              "version": "[8.0.22, 8.0.22]"
-            },
-            {
               "name": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
-              "version": "[8.0.22, 8.0.22]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Runtime.win-x86",
               "version": "[8.0.22, 8.0.22]"
             }
           ],
@@ -128,13 +104,7 @@
         }
       },
       "runtimes": {
-        "win-arm64": {
-          "#import": []
-        },
         "win-x64": {
-          "#import": []
-        },
-        "win-x86": {
           "#import": []
         }
       }

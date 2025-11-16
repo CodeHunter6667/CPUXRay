@@ -1,8 +1,5 @@
 {
   "profiles": {
-    "HardwareMonitorInterface (Package)": {
-      "commandName": "MsixPackage"
-    },
     "HardwareMonitorInterface (Unpackaged)": {
       "commandName": "Project"
     }
