@@ -4,10 +4,10 @@ public class Cpu
 {
     public Cpu() { 
     }
-    public Cpu(string nomeProcessador, int nucleosFisicospProcessador, int nucleosLogicosProcessador, int frequenciaMaximaMHzProcessador, int usoPorcentagemProcessador)
+    public Cpu(string nomeProcessador, int nucleosFisicosProcessador, int nucleosLogicosProcessador, int frequenciaMaximaMHzProcessador, int usoPorcentagemProcessador)
     {
         NomeProcessador = nomeProcessador;
-        NucleosFisicosProcessador = NucleosFisicosProcessador;
+        NucleosFisicosProcessador = nucleosFisicosProcessador;
         NucleosLogicosProcessador = nucleosLogicosProcessador;
         FrequenciaMaximaMHzProcessador = frequenciaMaximaMHzProcessador;
         UsoPorcentagemProcessador = usoPorcentagemProcessador;
