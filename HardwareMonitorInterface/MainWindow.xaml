@@ -185,7 +185,7 @@
                                             <StackPanel Orientation="Horizontal" Spacing="12">
                                                 <StackPanel>
                                                     <TextBlock Text="Total VRAM:"/>
-                                                    <TextBlock Text="{Binding MemoriaTotalMBPLacaVideo}"/>
+                                                    <TextBlock Text="{Binding MemoriaTotalMBPlacaVideo}"/>
                                                 </StackPanel>
                                             </StackPanel>
 

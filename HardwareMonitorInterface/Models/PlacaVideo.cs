@@ -6,7 +6,7 @@ public class PlacaVideo
     {
     } 
 
-    public PlacaVideo(string nomePlacaVideo, int memoriaTotalMBPlacaVideo, string versaoDriverPlacaVideo)
+    public PlacaVideo(string nomePlacaVideo, long memoriaTotalMBPlacaVideo, string versaoDriverPlacaVideo)
     {
         NomePlacaVideo = nomePlacaVideo;
         MemoriaTotalMBPlacaVideo = memoriaTotalMBPlacaVideo;
@@ -14,6 +14,6 @@ public class PlacaVideo
     }
 
     public string NomePlacaVideo { get; set; } = string.Empty;
-    public int MemoriaTotalMBPlacaVideo {  get; set; }
+    public long MemoriaTotalMBPlacaVideo {  get; set; }
     public string VersaoDriverPlacaVideo {  get; set; } = string.Empty;
 }

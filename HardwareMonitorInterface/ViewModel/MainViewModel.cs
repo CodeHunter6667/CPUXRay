@@ -60,8 +60,8 @@ namespace HardwareMonitorInterface.ViewModels
 
         public string GpuName { get => _gpuName; set { _gpuName = value; Raise(nameof(GpuName)); } }
         private string _gpuName;
-        public int GpuMemoryMB { get => _gpuMemoryMB; set { _gpuMemoryMB = value; Raise(nameof(GpuMemoryMB)); } }
-        private int _gpuMemoryMB;
+        public long GpuMemoryMB { get => _gpuMemoryMB; set { _gpuMemoryMB = value; Raise(nameof(GpuMemoryMB)); } }
+        private long _gpuMemoryMB;
         public string GpuDriverVersion { get => _gpuDriverVersion; set { _gpuDriverVersion = value; Raise(nameof(GpuDriverVersion)); } }
         private string _gpuDriverVersion;
 
