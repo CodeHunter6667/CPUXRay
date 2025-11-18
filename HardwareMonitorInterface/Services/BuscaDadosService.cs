@@ -135,16 +135,19 @@ public class BuscaDadosService
             Console.WriteLine($"   Erro ao obter informações da Placa Mãe: {ex.Message}");
         }
         //Obtendo leitura de Placa de Vídeo
-        PlacaVideo placaVideo = new PlacaVideo();
+        var placas = new List<PlacaVideo>();
         try
         {
             ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Name, AdapterRAM, DriverVersion FROM Win32_VideoController");
             foreach (ManagementObject obj in searcher.Get())
             {
-                placaVideo.NomePlacaVideo = obj["Name"]?.ToString();
+                string nomePlacaVideo = obj["Name"]?.ToString();
                 long memoriaBytes = Convert.ToInt64(obj["AdapterRAM"]);
-                placaVideo.MemoriaTotalMBPlacaVideo = (int)(memoriaBytes / (1024 * 1024));
-                placaVideo.VersaoDriverPlacaVideo = obj["DriverVersion"]?.ToString();
+                int memoriaTotalMBPlacaVideo = (int)Convert.ToInt64((memoriaBytes / (1024 * 1024)));
+                string versaoDriverPlacaVideo = obj["DriverVersion"]?.ToString();
+
+                var placa = new PlacaVideo(nomePlacaVideo, memoriaTotalMBPlacaVideo, versaoDriverPlacaVideo);
+                placas.Add(placa);
             }
         }
         catch (Exception ex)
@@ -158,7 +161,7 @@ public class BuscaDadosService
         sistema.Discos = discos;
 
         sistema.PlacaMae = new PlacaMae(placaMae.FabricantePlacaMae, placaMae.ModeloPlacaMae);
-        sistema.PlacaVideo = new PlacaVideo(placaVideo.NomePlacaVideo, placaVideo.MemoriaTotalMBPlacaVideo, placaVideo.VersaoDriverPlacaVideo);
+        sistema.PlacasVideo = placas;
         return sistema;
     }
 }

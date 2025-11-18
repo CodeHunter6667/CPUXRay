@@ -55,6 +55,9 @@ namespace HardwareMonitorInterface.ViewModels
         private string _motherboardModel;
 
         // GPU
+        public ObservableCollection<PlacaVideo> PlacasVideo { get => _placasVideo; }
+        private readonly ObservableCollection<PlacaVideo> _placasVideo = new();
+
         public string GpuName { get => _gpuName; set { _gpuName = value; Raise(nameof(GpuName)); } }
         private string _gpuName;
         public int GpuMemoryMB { get => _gpuMemoryMB; set { _gpuMemoryMB = value; Raise(nameof(GpuMemoryMB)); } }
@@ -127,11 +130,21 @@ namespace HardwareMonitorInterface.ViewModels
                 MotherboardModel = s.PlacaMae.ModeloPlacaMae;
             }
 
-            if (s.PlacaVideo != null)
+            if (s.PlacasVideo != null)
             {
-                GpuName = s.PlacaVideo.NomePlacaVideo;
-                GpuMemoryMB = s.PlacaVideo.MemoriaTotalMBPlacaVideo;
-                GpuDriverVersion = s.PlacaVideo.VersaoDriverPlacaVideo;
+                _placasVideo.Clear();
+                foreach (var placa in s.PlacasVideo)
+                {
+                    _placasVideo.Add(placa);
+                }
+
+                var placasVideo = s.PlacasVideo.FirstOrDefault();
+                if (placasVideo != null)
+                {
+                    _gpuName = placasVideo.NomePlacaVideo;
+                    _gpuMemoryMB = placasVideo.MemoriaTotalMBPlacaVideo;
+                    _gpuDriverVersion = placasVideo.VersaoDriverPlacaVideo;
+                }
             }
         }
     }

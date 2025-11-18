@@ -8,15 +8,15 @@ public class Sistema
     public Memoria Memoria { get; set; } = new();
     public List<Disco> Discos { get; set; } = new();
     public PlacaMae PlacaMae { get; set; } = new();
-    public PlacaVideo PlacaVideo { get; set; } = new();
+    public List<PlacaVideo> PlacasVideo { get; set; } = new();
     public Sistema() { 
     }
-    public Sistema(Cpu cpu, Memoria memoria, List<Disco> discos, PlacaMae placaMae, PlacaVideo placaVideo)
+    public Sistema(Cpu cpu, Memoria memoria, List<Disco> discos, PlacaMae placaMae, List<PlacaVideo> placaVideo)
     {
         Cpu = cpu;
         Memoria = memoria;
         Discos = discos;
         PlacaMae = placaMae;
-        PlacaVideo = placaVideo;
+        PlacasVideo = placaVideo;
     }
 }

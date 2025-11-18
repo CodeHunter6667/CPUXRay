@@ -176,19 +176,30 @@
                                    FontSize="18"
                                    FontWeight="SemiBold"/>
 
-                        <TextBlock Text="{Binding GpuName}" />
+                        <ItemsControl ItemsSource="{Binding PlacasVideo}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" Padding="8">
+                                        <StackPanel Spacing="6">
+                                            <TextBlock Text="{Binding NomePlacaVideo}" FontWeight="SemiBold"/>
+                                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                                <StackPanel>
+                                                    <TextBlock Text="Total VRAM:"/>
+                                                    <TextBlock Text="{Binding MemoriaTotalMBPLacaVideo}"/>
+                                                </StackPanel>
+                                            </StackPanel>
 
-                        <StackPanel Orientation="Horizontal" Spacing="12">
-                            <StackPanel>
-                                <TextBlock Text="Memória (MB):"/>
-                                <TextBlock Text="{Binding GpuMemoryMB}"/>
-                            </StackPanel>
-
-                            <StackPanel>
-                                <TextBlock Text="Driver:"/>
-                                <TextBlock Text="{Binding GpuDriverVersion}"/>
-                            </StackPanel>
-                        </StackPanel>
+                                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                                <StackPanel>
+                                                    <TextBlock Text="Versão Driver:"/>
+                                                    <TextBlock Text="{Binding VersaoDriverPlacaVideo}"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </StackPanel>
                 </ScrollViewer>
             </muxc:TabViewItem>
