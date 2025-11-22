@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HardwareMonitorInterface")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b13450a00e153c50757ff9e1f69e7ae5ef3e6325")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cb9c596caa40db3d4cd12a5b55778945d7c91d71")]
 [assembly: System.Reflection.AssemblyProductAttribute("HardwareMonitorInterface")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HardwareMonitorInterface")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,6 +1,8 @@
 using HardwareMonitorInterface.Models;
+using System;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace HardwareMonitorInterface.ViewModels
@@ -21,6 +23,9 @@ namespace HardwareMonitorInterface.ViewModels
         private int _cpuLogical;
         public int CpuMaxClockMHz { get => _cpuMaxClockMHz; set { _cpuMaxClockMHz = value; Raise(nameof(CpuMaxClockMHz)); } }
         private int _cpuMaxClockMHz;
+
+        // Uso por núcleo lógico (binding para o ItemsControl no XAML)
+        public ObservableCollection<CoreItem> CpuCoresUsage { get; } = new();
 
         // Memória
         public int MemTotalMB { get => _memTotalMB; set { _memTotalMB = value; Raise(nameof(MemTotalMB)); } }
@@ -89,6 +94,9 @@ namespace HardwareMonitorInterface.ViewModels
                 CpuLogical = s.Cpu.NucleosLogicosProcessador;
                 CpuMaxClockMHz = s.Cpu.FrequenciaMaximaMHzProcessador;
                 CpuUsage = s.Cpu.UsoPorcentagemProcessador;
+
+                // Atualiza barras por núcleo (suporta tanto a nova propriedade UsoPorcentagemPorNucleo quanto fallback)
+                AtualizarNucleosFromCpu(s.Cpu);
             }
 
             if (s.Memoria != null)
@@ -156,6 +164,88 @@ namespace HardwareMonitorInterface.ViewModels
                     GpuMemoryAvailableMB = placasVideo.MemoriaDisponivelMBPlacaVideo;
                 }
             }
+        }
+
+        // Tenta extrair lista de percentuais por núcleo da instância Cpu (por reflection para compatibilidade).
+        // Se a propriedade não existir, cria fallback com zeros (contagem baseada em CpuLogical).
+        private void AtualizarNucleosFromCpu(Cpu cpu)
+        {
+            if (cpu == null)
+            {
+                CpuCoresUsage.Clear();
+                return;
+            }
+
+            // tenta obter property named "UsoPorcentagemPorNucleo"
+            List<int>? percents = null;
+            try
+            {
+                var prop = cpu.GetType().GetProperty("UsoPorcentagemPorNucleo");
+                if (prop != null)
+                {
+                    var val = prop.GetValue(cpu);
+                    if (val is IEnumerable<int> ints)
+                        percents = ints.ToList();
+                    else if (val is IEnumerable<object> objs)
+                    {
+                        percents = objs.Select(o =>
+                        {
+                            if (o == null) return 0;
+                            if (o is int i) return i;
+                            if (int.TryParse(o.ToString(), out int parsed)) return parsed;
+                            return 0;
+                        }).ToList();
+                    }
+                }
+            }
+            catch
+            {
+                percents = null;
+            }
+
+            // fallback: se não houver dados por núcleo, cria lista baseada em CpuLogical preenchida com 0
+            if (percents == null)
+            {
+                int logical = cpu.NucleosLogicosProcessador > 0 ? cpu.NucleosLogicosProcessador : Environment.ProcessorCount;
+                percents = Enumerable.Repeat(0, logical).ToList();
+            }
+
+            // Atualiza coleção ObservableCollection<CoreItem>
+            if (CpuCoresUsage.Count != percents.Count)
+            {
+                CpuCoresUsage.Clear();
+                for (int i = 0; i < percents.Count; i++)
+                {
+                    CpuCoresUsage.Add(new CoreItem { Index = i, Usage = percents[i] });
+                }
+            }
+            else
+            {
+                for (int i = 0; i < percents.Count; i++)
+                {
+                    CpuCoresUsage[i].Usage = percents[i];
+                }
+            }
+        }
+
+        // Classe interna para representar um núcleo lógico no binding
+        public class CoreItem : INotifyPropertyChanged
+        {
+            private int _usage;
+            public int Index { get; set; }
+            public int DisplayIndex => Index + 1; // para exibir Núcleo 1,2,...
+            public int Usage
+            {
+                get => _usage;
+                set
+                {
+                    if (_usage == value) return;
+                    _usage = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Usage)));
+                }
+            }
+
+            public event PropertyChangedEventHandler? PropertyChanged;
         }
     }
 }

@@ -14,25 +14,56 @@ public class BuscaDadosService
 
         Sistema sistema = new Sistema();
 
-        //Obtendo leitura de CPU
+        //Obtendo leitura de CPU (WMI) + uso por núcleo (Win32_PerfFormattedData_PerfOS_Processor)
         Cpu cpu = new Cpu();
         try
         {
+            // Informações estáticas/gerais da CPU
             ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Name, NumberOfCores, NumberOfLogicalProcessors, MaxClockSpeed, LoadPercentage FROM Win32_Processor");
-
             foreach (ManagementObject obj in searcher.Get())
             {
-                cpu.NomeProcessador = obj["Name"]?.ToString();
-                cpu.NucleosFisicosProcessador = Convert.ToInt32(obj["NumberOfCores"]);
-                cpu.NucleosLogicosProcessador = Convert.ToInt32(obj["NumberOfLogicalProcessors"]);
-                cpu.FrequenciaMaximaMHzProcessador = Convert.ToInt32(obj["MaxClockSpeed"]);
-                cpu.UsoPorcentagemProcessador = Convert.ToInt32(obj["LoadPercentage"]);
+                cpu.NomeProcessador = obj["Name"]?.ToString() ?? string.Empty;
+                cpu.NucleosFisicosProcessador = obj["NumberOfCores"] != null ? Convert.ToInt32(obj["NumberOfCores"]) : 0;
+                cpu.NucleosLogicosProcessador = obj["NumberOfLogicalProcessors"] != null ? Convert.ToInt32(obj["NumberOfLogicalProcessors"]) : 0;
+                cpu.FrequenciaMaximaMHzProcessador = obj["MaxClockSpeed"] != null ? Convert.ToInt32(obj["MaxClockSpeed"]) : 0;
+                cpu.UsoPorcentagemProcessador = obj["LoadPercentage"] != null ? Convert.ToInt32(obj["LoadPercentage"]) : 0;
+            }
+
+            // Uso por núcleo via Win32_PerfFormattedData_PerfOS_Processor
+            try
+            {
+                var perCoreSearcher = new ManagementObjectSearcher("SELECT Name, PercentProcessorTime FROM Win32_PerfFormattedData_PerfOS_Processor");
+                var coreValues = new Dictionary<int, int>();
+                foreach (ManagementObject obj in perCoreSearcher.Get())
+                {
+                    var name = obj["Name"]?.ToString();
+                    if (string.IsNullOrEmpty(name) || name == "_Total") continue;
+                    if (int.TryParse(name, out int idx))
+                    {
+                        int val = 0;
+                        try { val = obj["PercentProcessorTime"] != null ? Convert.ToInt32(obj["PercentProcessorTime"]) : 0; } catch { val = 0; }
+                        coreValues[idx] = val;
+                    }
+                }
+
+                int logical = cpu.NucleosLogicosProcessador > 0 ? cpu.NucleosLogicosProcessador : Environment.ProcessorCount;
+                cpu.UsoPorcentagemPorNucleo = new List<int>();
+                for (int i = 0; i < logical; i++)
+                {
+                    cpu.UsoPorcentagemPorNucleo.Add(coreValues.ContainsKey(i) ? coreValues[i] : 0);
+                }
+            }
+            catch
+            {
+                // Se falhar ao ler por núcleo, mantém a lista vazia/zeros (o ViewModel faz fallback)
+                cpu.UsoPorcentagemPorNucleo = cpu.UsoPorcentagemPorNucleo ?? new List<int>();
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"   Erro ao obter informações da CPU: {ex.Message}");
         }
+
         //Obtendo leitura de Memória RAM
         Memoria ram = new Memoria();
         try
@@ -307,6 +338,17 @@ public class BuscaDadosService
 
         //Reunindo os dados do sistema no pacote e retornando
         sistema.Cpu = new Cpu(cpu.NomeProcessador, cpu.NucleosFisicosProcessador, cpu.NucleosLogicosProcessador, cpu.FrequenciaMaximaMHzProcessador, cpu.UsoPorcentagemProcessador);
+        // copia a lista por núcleo se existir
+        try
+        {
+            // copia os valores populados acima
+            sistema.Cpu.UsoPorcentagemPorNucleo = cpu.UsoPorcentagemPorNucleo != null ? new System.Collections.Generic.List<int>(cpu.UsoPorcentagemPorNucleo) : new System.Collections.Generic.List<int>();
+        }
+        catch
+        {
+            sistema.Cpu.UsoPorcentagemPorNucleo = new System.Collections.Generic.List<int>();
+        }
+
         sistema.Memoria = new Memoria(ram.TotalMBMemoria, ram.TotalEmUsoMBMemoria, ram.TotalLivreMBMemoria, ram.UsoPorcentagemMemoria);
 
         sistema.Discos = discos;
