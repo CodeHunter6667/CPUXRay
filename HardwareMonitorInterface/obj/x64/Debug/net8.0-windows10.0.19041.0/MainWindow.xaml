@@ -185,11 +185,30 @@
                                             <StackPanel Orientation="Horizontal" Spacing="12">
                                                 <StackPanel>
                                                     <TextBlock Text="Total VRAM:"/>
-                                                    <TextBlock Text="{Binding MemoriaTotalMBPlacaVideo}"/>
+                                                    <TextBlock>
+                                                        <Run Text="{Binding MemoriaTotalMBPlacaVideo}"/>
+                                                        <Run Text=" MB"/>
+                                                    </TextBlock>
+                                                </StackPanel>
+
+                                                <StackPanel>
+                                                    <TextBlock Text="Em uso:"/>
+                                                    <TextBlock>
+                                                        <Run Text="{Binding MemoriaEmUsoMBPlacaVideo}"/>
+                                                        <Run Text=" MB"/>
+                                                    </TextBlock>
+                                                </StackPanel>
+
+                                                <StackPanel>
+                                                    <TextBlock Text="Disponível:"/>
+                                                    <TextBlock>
+                                                        <Run Text="{Binding MemoriaDisponivelMBPlacaVideo}"/>
+                                                        <Run Text=" MB"/>
+                                                    </TextBlock>
                                                 </StackPanel>
                                             </StackPanel>
 
-                                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                            <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,6,0,0">
                                                 <StackPanel>
                                                     <TextBlock Text="Versão Driver:"/>
                                                     <TextBlock Text="{Binding VersaoDriverPlacaVideo}"/>

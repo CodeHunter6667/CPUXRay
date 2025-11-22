@@ -138,7 +138,7 @@ public class BuscaDadosService
         }
 
         //Obtendo leitura de Placa de Vídeo (WMI + fallback DXGI) com merge para evitar duplicatas
-        var wmiGpus = new List<(string Name, int MemMB, string Driver)>();
+        var wmiGpus = new List<(string Name, int MemMB, string Driver, long UsedMB, long AvailableMB)>();
         try
         {
             ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Name, AdapterRAM, DriverVersion FROM Win32_VideoController");
@@ -166,7 +166,8 @@ public class BuscaDadosService
                 }
 
                 int memoriaTotalMBPlacaVideo = wmiValido ? (int)(memoriaBytes / (1024 * 1024)) : 0;
-                wmiGpus.Add((nomePlacaVideo, memoriaTotalMBPlacaVideo, versaoDriverPlacaVideo));
+                // WMI não fornece uso/disponível; preencher 0 para que DXGI possa sobrescrever se disponível
+                wmiGpus.Add((nomePlacaVideo, memoriaTotalMBPlacaVideo, versaoDriverPlacaVideo, 0L, 0L));
             }
         }
         catch (Exception ex)
@@ -174,7 +175,7 @@ public class BuscaDadosService
             Console.WriteLine($"   Erro ao obter informações da Placa de Vídeo (WMI): {ex.Message}");
         }
 
-        var dxgiGpus = new List<(string Name, int MemMB, string Driver)>();
+        var dxgiGpus = new List<(string Name, int MemMB, string Driver, long UsedMB, long AvailableMB)>();
         try
         {
             using var factory = DXGI.CreateDXGIFactory1<IDXGIFactory1>();
@@ -183,7 +184,51 @@ public class BuscaDadosService
                 var desc = adapter.Description1;
                 string nome = desc.Description.Trim();
                 int memoriaMB = (int)(desc.DedicatedVideoMemory.Value / (1024 * 1024));
-                dxgiGpus.Add((nome, memoriaMB, "DXGI"));
+
+                long usadaMB = 0;
+                long disponivelMB = 0;
+
+                // Tenta obter uso/disponível via IDXGIAdapter3.QueryVideoMemoryInfo (quando suportado)
+                try
+                {
+                    // Se a instância suportar IDXGIAdapter3
+                    if (adapter is IDXGIAdapter3 adapter3)
+                    {
+                        // Primeiro tenta Local
+                        var info = adapter3.QueryVideoMemoryInfo(0, MemorySegmentGroup.Local);
+                        ulong currentUsage = info.CurrentUsage;
+                        ulong budget = info.Budget;
+
+                        // Se Local não fornecer dados, tenta NonLocal (fallback importante para GPUs integradas)
+                        if (currentUsage == 0 && budget == 0)
+                        {
+                            try
+                            {
+                                var infoNonLocal = adapter3.QueryVideoMemoryInfo(0, MemorySegmentGroup.NonLocal);
+                                currentUsage = infoNonLocal.CurrentUsage;
+                                budget = infoNonLocal.Budget;
+                            }
+                            catch
+                            {
+                                // ignora, manter zeros
+                            }
+                        }
+
+                        usadaMB = (long)(currentUsage / (1024 * 1024));
+                        disponivelMB = (long)(((budget > currentUsage) ? (budget - currentUsage) : 0UL) / (1024 * 1024));
+                    }
+                    else
+                    {
+                        // adapter não expõe IDXGIAdapter3 — útil para diagnóstico
+                        Console.WriteLine($"   DXGI adapter não expõe IDXGIAdapter3: {nome}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"   Erro ao consultar VRAM via DXGI para {nome}: {ex.Message}");
+                }
+
+                dxgiGpus.Add((nome, memoriaMB, "DXGI", usadaMB, disponivelMB));
             }
         }
         catch
@@ -192,7 +237,7 @@ public class BuscaDadosService
         }
 
         // Merge: normaliza nomes e combina entradas, preferindo VRAM DXGI quando mais confiável (maior) e mantendo driver válido
-        List<(string Name, int MemMB, string Driver)> merged = new List<(string, int, string)>();
+        List<(string Name, int MemMB, string Driver, long UsedMB, long AvailableMB)> merged = new List<(string, int, string, long, long)>();
 
         string NormalizeName(string s)
         {
@@ -218,7 +263,7 @@ public class BuscaDadosService
         // Add WMI entries first
         foreach (var w in wmiGpus)
         {
-            merged.Add((w.Name ?? string.Empty, w.MemMB, w.Driver ?? string.Empty));
+            merged.Add((w.Name ?? string.Empty, w.MemMB, w.Driver ?? string.Empty, w.UsedMB, w.AvailableMB));
         }
 
         // Merge DXGI entries: se corresponder a um WMI existente atualiza VRAM se DXGI for mais confiável; caso contrário adiciona novo
@@ -229,15 +274,21 @@ public class BuscaDadosService
             {
                 var existing = merged[existingIndex];
                 int chosenMem = existing.MemMB;
+                long chosenUsed = existing.UsedMB;
+                long chosenAvailable = existing.AvailableMB;
                 // se WMI não trouxe mem (0) ou DXGI é maior, usa DXGI
                 if (d.MemMB > existing.MemMB)
                     chosenMem = d.MemMB;
+                // Preferir valores DXGI quando fornecidos (não-zero)
+                if (d.UsedMB > 0) chosenUsed = d.UsedMB;
+                if (d.AvailableMB > 0) chosenAvailable = d.AvailableMB;
+
                 string chosenDriver = !string.IsNullOrWhiteSpace(existing.Driver) && existing.Driver != "0" ? existing.Driver : d.Driver;
-                merged[existingIndex] = (existing.Name, chosenMem, chosenDriver);
+                merged[existingIndex] = (existing.Name, chosenMem, chosenDriver, chosenUsed, chosenAvailable);
             }
             else
             {
-                merged.Add((d.Name ?? string.Empty, d.MemMB, d.Driver ?? string.Empty));
+                merged.Add((d.Name ?? string.Empty, d.MemMB, d.Driver ?? string.Empty, d.UsedMB, d.AvailableMB));
             }
         }
 
@@ -251,7 +302,7 @@ public class BuscaDadosService
 
         var placas = merged
             .Where(m => !(m.MemMB == 0 && IsMicrosoftBasic(m.Name))) // remove Microsoft Basic com 0 MB
-            .Select(m => new PlacaVideo(m.Name, m.MemMB, m.Driver))
+            .Select(m => new PlacaVideo(m.Name, m.MemMB, m.Driver, m.UsedMB, m.AvailableMB))
             .ToList();
 
         //Reunindo os dados do sistema no pacote e retornando

@@ -65,6 +65,12 @@ namespace HardwareMonitorInterface.ViewModels
         public string GpuDriverVersion { get => _gpuDriverVersion; set { _gpuDriverVersion = value; Raise(nameof(GpuDriverVersion)); } }
         private string _gpuDriverVersion;
 
+        // Novas propriedades para VRAM em uso e disponível
+        public long GpuMemoryUsedMB { get => _gpuMemoryUsedMB; set { _gpuMemoryUsedMB = value; Raise(nameof(GpuMemoryUsedMB)); } }
+        private long _gpuMemoryUsedMB;
+        public long GpuMemoryAvailableMB { get => _gpuMemoryAvailableMB; set { _gpuMemoryAvailableMB = value; Raise(nameof(GpuMemoryAvailableMB)); } }
+        private long _gpuMemoryAvailableMB;
+
         public MainViewModel() { }
 
         /// <summary>
@@ -132,6 +138,7 @@ namespace HardwareMonitorInterface.ViewModels
 
             if (s.PlacasVideo != null)
             {
+                // Recria a coleção de placas (mantém comportamento atual de rebind para garantir UI atualizada)
                 _placasVideo.Clear();
                 foreach (var placa in s.PlacasVideo)
                 {
@@ -141,9 +148,12 @@ namespace HardwareMonitorInterface.ViewModels
                 var placasVideo = s.PlacasVideo.FirstOrDefault();
                 if (placasVideo != null)
                 {
-                    _gpuName = placasVideo.NomePlacaVideo;
-                    _gpuMemoryMB = placasVideo.MemoriaTotalMBPlacaVideo;
-                    _gpuDriverVersion = placasVideo.VersaoDriverPlacaVideo;
+                    // Usa os setters para disparar PropertyChanged
+                    GpuName = placasVideo.NomePlacaVideo;
+                    GpuMemoryMB = placasVideo.MemoriaTotalMBPlacaVideo;
+                    GpuDriverVersion = placasVideo.VersaoDriverPlacaVideo;
+                    GpuMemoryUsedMB = placasVideo.MemoriaEmUsoMBPlacaVideo;
+                    GpuMemoryAvailableMB = placasVideo.MemoriaDisponivelMBPlacaVideo;
                 }
             }
         }
