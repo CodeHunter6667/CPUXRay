@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management;
+using System.Text.RegularExpressions;
+using Vortice.DXGI;
 namespace HardwareMonitorInterface.Services;
 
 public class BuscaDadosService
@@ -134,26 +136,124 @@ public class BuscaDadosService
         {
             Console.WriteLine($"   Erro ao obter informações da Placa Mãe: {ex.Message}");
         }
-        //Obtendo leitura de Placa de Vídeo
-        var placas = new List<PlacaVideo>();
+
+        //Obtendo leitura de Placa de Vídeo (WMI + fallback DXGI) com merge para evitar duplicatas
+        var wmiGpus = new List<(string Name, int MemMB, string Driver)>();
         try
         {
             ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Name, AdapterRAM, DriverVersion FROM Win32_VideoController");
             foreach (ManagementObject obj in searcher.Get())
             {
-                string nomePlacaVideo = obj["Name"]?.ToString();
-                long memoriaBytes = Convert.ToInt64(obj["AdapterRAM"]);
-                int memoriaTotalMBPlacaVideo = (int)Convert.ToInt64((memoriaBytes / (1024 * 1024)));
-                string versaoDriverPlacaVideo = obj["DriverVersion"]?.ToString();
+                string nomePlacaVideo = obj["Name"]?.ToString() ?? string.Empty;
+                string versaoDriverPlacaVideo = obj["DriverVersion"]?.ToString() ?? string.Empty;
 
-                var placa = new PlacaVideo(nomePlacaVideo, memoriaTotalMBPlacaVideo, versaoDriverPlacaVideo);
-                placas.Add(placa);
+                long memoriaBytes = 0;
+                bool wmiValido = false;
+                var adapterRamObj = obj["AdapterRAM"];
+                if (adapterRamObj != null)
+                {
+                    try
+                    {
+                        memoriaBytes = Convert.ToInt64(adapterRamObj);
+                        // Valores próximos de uint.MaxValue (4294967295) ou 0 geralmente indicam resposta inválida do WMI/driver
+                        if (memoriaBytes > 0 && memoriaBytes < 4294967295L)
+                            wmiValido = true;
+                    }
+                    catch
+                    {
+                        wmiValido = false;
+                    }
+                }
+
+                int memoriaTotalMBPlacaVideo = wmiValido ? (int)(memoriaBytes / (1024 * 1024)) : 0;
+                wmiGpus.Add((nomePlacaVideo, memoriaTotalMBPlacaVideo, versaoDriverPlacaVideo));
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"   Erro ao obter informações da Placa de Vídeo: {ex.Message}");
+            Console.WriteLine($"   Erro ao obter informações da Placa de Vídeo (WMI): {ex.Message}");
         }
+
+        var dxgiGpus = new List<(string Name, int MemMB, string Driver)>();
+        try
+        {
+            using var factory = DXGI.CreateDXGIFactory1<IDXGIFactory1>();
+            for (uint i = 0; factory.EnumAdapters1(i, out IDXGIAdapter1 adapter).Success; i++)
+            {
+                var desc = adapter.Description1;
+                string nome = desc.Description.Trim();
+                int memoriaMB = (int)(desc.DedicatedVideoMemory.Value / (1024 * 1024));
+                dxgiGpus.Add((nome, memoriaMB, "DXGI"));
+            }
+        }
+        catch
+        {
+            // Não falhar se DXGI não estiver disponível
+        }
+
+        // Merge: normaliza nomes e combina entradas, preferindo VRAM DXGI quando mais confiável (maior) e mantendo driver válido
+        List<(string Name, int MemMB, string Driver)> merged = new List<(string, int, string)>();
+
+        string NormalizeName(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return string.Empty;
+            // remove conteúdo entre parênteses e depois de vírgula, várias espaços, e baixa caixa
+            var withoutParens = Regex.Replace(s, @"\(.+?\)", string.Empty);
+            var beforeComma = Regex.Replace(withoutParens, @",.*", string.Empty);
+            var compact = Regex.Replace(beforeComma, @"\s+", " ").Trim().ToLowerInvariant();
+            return compact;
+        }
+
+        bool NamesMatch(string a, string b)
+        {
+            var na = NormalizeName(a);
+            var nb = NormalizeName(b);
+            if (string.IsNullOrEmpty(na) || string.IsNullOrEmpty(nb)) return false;
+            if (na == nb) return true;
+            // se um contém o outro (por exemplo "nvidia geforce gtx 1080" vs "geforce gtx 1080")
+            if (na.Contains(nb) || nb.Contains(na)) return true;
+            return false;
+        }
+
+        // Add WMI entries first
+        foreach (var w in wmiGpus)
+        {
+            merged.Add((w.Name ?? string.Empty, w.MemMB, w.Driver ?? string.Empty));
+        }
+
+        // Merge DXGI entries: se corresponder a um WMI existente atualiza VRAM se DXGI for mais confiável; caso contrário adiciona novo
+        foreach (var d in dxgiGpus)
+        {
+            var existingIndex = merged.FindIndex(m => NamesMatch(m.Name, d.Name));
+            if (existingIndex >= 0)
+            {
+                var existing = merged[existingIndex];
+                int chosenMem = existing.MemMB;
+                // se WMI não trouxe mem (0) ou DXGI é maior, usa DXGI
+                if (d.MemMB > existing.MemMB)
+                    chosenMem = d.MemMB;
+                string chosenDriver = !string.IsNullOrWhiteSpace(existing.Driver) && existing.Driver != "0" ? existing.Driver : d.Driver;
+                merged[existingIndex] = (existing.Name, chosenMem, chosenDriver);
+            }
+            else
+            {
+                merged.Add((d.Name ?? string.Empty, d.MemMB, d.Driver ?? string.Empty));
+            }
+        }
+
+        // Filtra entradas indesejadas (ex.: Microsoft Basic Render Driver com 0 VRAM)
+        bool IsMicrosoftBasic(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) return false;
+            var n = name.ToLowerInvariant();
+            return n.Contains("microsoft basic") || n.Contains("basic render") || n.Contains("basic display") || n.Contains("microsoft basic render") || n.Contains("microsoft basic display");
+        }
+
+        var placas = merged
+            .Where(m => !(m.MemMB == 0 && IsMicrosoftBasic(m.Name))) // remove Microsoft Basic com 0 MB
+            .Select(m => new PlacaVideo(m.Name, m.MemMB, m.Driver))
+            .ToList();
+
         //Reunindo os dados do sistema no pacote e retornando
         sistema.Cpu = new Cpu(cpu.NomeProcessador, cpu.NucleosFisicosProcessador, cpu.NucleosLogicosProcessador, cpu.FrequenciaMaximaMHzProcessador, cpu.UsoPorcentagemProcessador);
         sistema.Memoria = new Memoria(ram.TotalMBMemoria, ram.TotalEmUsoMBMemoria, ram.TotalLivreMBMemoria, ram.UsoPorcentagemMemoria);

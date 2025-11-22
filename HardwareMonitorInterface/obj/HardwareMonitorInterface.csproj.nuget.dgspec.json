@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\PICHAU\\source\\repos\\CPUXRay\\HardwareMonitorInterface\\HardwareMonitorInterface.csproj": {}
+    "C:\\Users\\pedro\\source\\repos\\CPUXRay\\HardwareMonitorInterface\\HardwareMonitorInterface.csproj": {}
   },
   "projects": {
-    "C:\\Users\\PICHAU\\source\\repos\\CPUXRay\\HardwareMonitorInterface\\HardwareMonitorInterface.csproj": {
+    "C:\\Users\\pedro\\source\\repos\\CPUXRay\\HardwareMonitorInterface\\HardwareMonitorInterface.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\PICHAU\\source\\repos\\CPUXRay\\HardwareMonitorInterface\\HardwareMonitorInterface.csproj",
+        "projectUniqueName": "C:\\Users\\pedro\\source\\repos\\CPUXRay\\HardwareMonitorInterface\\HardwareMonitorInterface.csproj",
         "projectName": "HardwareMonitorInterface",
-        "projectPath": "C:\\Users\\PICHAU\\source\\repos\\CPUXRay\\HardwareMonitorInterface\\HardwareMonitorInterface.csproj",
-        "packagesPath": "C:\\Users\\PICHAU\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\PICHAU\\source\\repos\\CPUXRay\\HardwareMonitorInterface\\obj\\",
+        "projectPath": "C:\\Users\\pedro\\source\\repos\\CPUXRay\\HardwareMonitorInterface\\HardwareMonitorInterface.csproj",
+        "packagesPath": "C:\\Users\\pedro\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\pedro\\source\\repos\\CPUXRay\\HardwareMonitorInterface\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\PICHAU\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\pedro\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -61,6 +61,10 @@
             "System.Management": {
               "target": "Package",
               "version": "[10.0.0, )"
+            },
+            "Vortice.DXGI": {
+              "target": "Package",
+              "version": "[3.6.2, )"
             }
           },
           "imports": [
