@@ -217,22 +217,6 @@
                                                         <Run Text=" MB"/>
                                                     </TextBlock>
                                                 </StackPanel>
-
-                                                <StackPanel>
-                                                    <TextBlock Text="Em uso:"/>
-                                                    <TextBlock>
-                                                        <Run Text="{Binding MemoriaEmUsoMBPlacaVideo}"/>
-                                                        <Run Text=" MB"/>
-                                                    </TextBlock>
-                                                </StackPanel>
-
-                                                <StackPanel>
-                                                    <TextBlock Text="Disponível:"/>
-                                                    <TextBlock>
-                                                        <Run Text="{Binding MemoriaDisponivelMBPlacaVideo}"/>
-                                                        <Run Text=" MB"/>
-                                                    </TextBlock>
-                                                </StackPanel>
                                             </StackPanel>
 
                                             <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,6,0,0">
