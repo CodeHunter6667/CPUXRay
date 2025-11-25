@@ -4,8 +4,19 @@ namespace CPUXRay.Models;
 
 public class RamInfo
 {
-    public long TotalPhysicalMemory { get; set; } // Bytes
-    public long AvailableMemory { get; set; }
-    public double UsagePercentage { get; set; }
-    public List<MemoryModule> Modules { get; set; } = [];
+    public RamInfo()
+    {
+    }
+    public RamInfo(int totalMBMemoria, int totalEmUsoMBMemoria, int totalMemoriaLivreMB, int usoPorcentagemMemoria)
+    {
+        TotalMBMemoria = totalMBMemoria;
+        TotalEmUsoMBMemoria = totalEmUsoMBMemoria;
+        TotalLivreMBMemoria = totalMemoriaLivreMB;
+        UsoPorcentagemMemoria = usoPorcentagemMemoria;
+    }
+
+    public int TotalMBMemoria { get; set; }
+    public int TotalEmUsoMBMemoria { get; set; }
+    public int TotalLivreMBMemoria { get; set; }
+    public int UsoPorcentagemMemoria { get; set; }
 }

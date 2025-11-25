@@ -1,15 +1,16 @@
-﻿using System;
-
-namespace CPUXRay.Models;
+﻿namespace CPUXRay.Models;
 
 public class MotherboardInfo
 {
-    public string Manufacturer { get; set; } = string.Empty;
-    public string Product { get; set; } = string.Empty;
-    public string Version { get; set; } = string.Empty;
-    public string SerialNumber { get; set; } = string.Empty;
-    public string BiosManufacturer { get; set; } = string.Empty;
-    public string BiosVersion { get; set; } = string.Empty;
-    public DateTime BiosReleaseDate { get; set; }
-    public string Chipset { get; set; } = string.Empty;
+    public MotherboardInfo()
+    {
+    }
+    public MotherboardInfo(string fabricantePlacaMae, string modeloPlacaMae)
+    {
+        FabricantePlacaMae = fabricantePlacaMae;
+        ModeloPlacaMae = modeloPlacaMae;
+    }
+
+    public string FabricantePlacaMae { get; set; } = string.Empty;
+    public string ModeloPlacaMae { get; set; } = string.Empty;
 }

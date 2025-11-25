@@ -1,18 +1,28 @@
-﻿namespace CPUXRay.Models;
+﻿using System.Collections.Generic;
+
+namespace CPUXRay.Models;
 
 public class CpuInfo
 {
-    public string Name { get; set; } = string.Empty;
-    public string Manufacturer { get; set; } = string.Empty;
-    public string Architecture { get; set; } = string.Empty;
-    public int Cores { get; set; }
-    public int LogicalProcessors { get; set; }
-    public double MaxClockSpeed { get; set; } // MHz
-    public double CurrentClockSpeed { get; set; }
-    public string Socket { get; set; } = string.Empty;
-    public string ProcessorId { get; set; } = string.Empty;
-    public int L2CacheSize { get; set; } // KB
-    public int L3CacheSize { get; set; }
-    public double Temperature { get; set; }
-    public double Usage { get; set; }
+    public CpuInfo()
+    {
+    }
+    public CpuInfo(string nomeProcessador, int nucleosFisicosProcessador, int nucleosLogicosProcessador, int frequenciaMaximaMHzProcessador, int usoPorcentagemProcessador)
+    {
+        NomeProcessador = nomeProcessador;
+        NucleosFisicosProcessador = nucleosFisicosProcessador;
+        NucleosLogicosProcessador = nucleosLogicosProcessador;
+        FrequenciaMaximaMHzProcessador = frequenciaMaximaMHzProcessador;
+        UsoPorcentagemProcessador = usoPorcentagemProcessador;
+        UsoPorcentagemPorNucleo = new System.Collections.Generic.List<int>();
+    }
+
+    public string NomeProcessador { get; set; } = string.Empty;
+    public int NucleosFisicosProcessador { get; set; }
+    public int NucleosLogicosProcessador { get; set; }
+    public int FrequenciaMaximaMHzProcessador { get; set; }
+    public int UsoPorcentagemProcessador { get; set; }
+
+    // NOVO: uso por núcleo lógico (0..N-1)
+    public List<int> UsoPorcentagemPorNucleo { get; set; } = new();
 }
